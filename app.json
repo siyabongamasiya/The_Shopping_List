@@ -1,20 +1,22 @@
 {
   "expo": {
-    "name": "The_Shopping_List",
+    "name": "Shopping List",
     "slug": "The_Shopping_List",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.svg",
     "scheme": "theshoppinglist",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./assets/images/logo.svg"
     },
     "android": {
+      "icon": "./assets/images/logo.svg",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundColor": "#2563eb",
+        "foregroundImage": "./assets/images/logo.svg",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
@@ -23,7 +25,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo.svg"
     },
     "plugins": [
       "expo-router",

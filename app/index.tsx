@@ -3,6 +3,7 @@ import { ShoppingItemCard } from "@/components/shopping-item-card";
 import { ShoppingItem } from "@/types/shopping";
 import { loadItems, saveItems } from "@/utils/storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -115,11 +116,10 @@ export default function ShoppingListScreen() {
         <LinearGradient colors={["#2563eb", "#1d4ed8"]} style={styles.header}>
           <View style={styles.headerContent}>
             <View style={styles.titleContainer}>
-              <MaterialCommunityIcons
-                name="cart"
-                size={32}
-                color="#ffffff"
-                style={styles.cartIcon}
+              <Image
+                source={require("@/assets/images/logo.svg")}
+                style={styles.logo}
+                contentFit="contain"
               />
               <View>
                 <Text style={styles.headerTitle}>Shopping List</Text>
@@ -142,11 +142,10 @@ export default function ShoppingListScreen() {
       <LinearGradient colors={["#2563eb", "#1d4ed8"]} style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.titleContainer}>
-            <MaterialCommunityIcons
-              name="cart"
-              size={32}
-              color="#ffffff"
-              style={styles.cartIcon}
+            <Image
+              source={require("@/assets/images/logo.svg")}
+              style={styles.logo}
+              contentFit="contain"
             />
             <View>
               <Text style={styles.headerTitle}>Shopping List</Text>
@@ -266,7 +265,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  cartIcon: {
+  logo: {
+    width: 40,
+    height: 40,
     marginRight: 12,
   },
   headerTitle: {
