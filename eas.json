@@ -14,17 +14,20 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
       },
       "env": {
         "EXPO_PUBLIC_ENV": "preview"
-      }
+      },
+      "credentialsSource": "remote"
     },
     "production": {
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ENV": "production"
-      }
+      },
+      "credentialsSource": "remote"
     }
   },
   "submit": {
