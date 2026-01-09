@@ -130,7 +130,7 @@ export default function ShoppingListScreen() {
         </LinearGradient>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#2563eb" />
-          <Text style={styles.loadingText}>Loading your items...</Text>
+          <Text style={styles.loadingText}>Loading your items....</Text>
         </View>
       </SafeAreaView>
     );
