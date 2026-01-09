@@ -1,29 +1,52 @@
 import { AddItemForm } from "@/components/add-item-form";
 import { ShoppingItemCard } from "@/components/shopping-item-card";
 import { ShoppingItem } from "@/types/shopping";
+import { loadItems, saveItems } from "@/utils/storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
+  Keyboard,
   Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 
-// Mock data - 5 items (3 unpurchased, 2 purchased)
-const initialItems: ShoppingItem[] = [
-  { id: "1", name: "Milk", quantity: "2L", purchased: false },
-  { id: "2", name: "Bread", quantity: "1 loaf", purchased: false },
-  { id: "3", name: "Eggs", quantity: "12", purchased: false },
-  { id: "4", name: "Apples", quantity: "1kg", purchased: true },
-  { id: "5", name: "Butter", quantity: "1", purchased: true },
-];
-
 export default function ShoppingListScreen() {
-  const [items, setItems] = useState<ShoppingItem[]>(initialItems);
+  const [items, setItems] = useState<ShoppingItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  // Load items from storage on mount
+  useEffect(() => {
+    const loadStoredItems = async () => {
+      try {
+        const storedItems = await loadItems();
+        setItems(storedItems);
+      } catch (error) {
+        console.error("Failed to load items:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadStoredItems();
+  }, []);
+
+  // Save items to storage whenever they change
+  useEffect(() => {
+    if (!isLoading) {
+      saveItems(items).catch((error) => {
+        console.error("Failed to save items:", error);
+      });
+    }
+  }, [items, isLoading]);
 
   const unpurchasedItems = items.filter((item) => !item.purchased);
   const purchasedItems = items.filter((item) => item.purchased);
@@ -45,7 +68,27 @@ export default function ShoppingListScreen() {
   };
 
   const handleDelete = (id: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    const itemToDelete = items.find((item) => item.id === id);
+    if (!itemToDelete) return;
+
+    Alert.alert(
+      "Delete Item",
+      `Are you sure you want to delete "${itemToDelete.name}"?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleAdd = (name: string, quantity: string) => {
@@ -56,9 +99,42 @@ export default function ShoppingListScreen() {
       purchased: false,
     };
     setItems((prevItems) => [newItem, ...prevItems]);
+
+    // Scroll to top to show the newly added item
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    }, 100);
   };
 
   const totalItemsToBuy = unpurchasedItems.length;
+
+  // Show loading indicator while fetching data
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LinearGradient colors={["#2563eb", "#1d4ed8"]} style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.titleContainer}>
+              <MaterialCommunityIcons
+                name="cart"
+                size={32}
+                color="#ffffff"
+                style={styles.cartIcon}
+              />
+              <View>
+                <Text style={styles.headerTitle}>Shopping List</Text>
+                <Text style={styles.headerSubtitle}>Loading...</Text>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2563eb" />
+          <Text style={styles.loadingText}>Loading your items...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -89,63 +165,69 @@ export default function ShoppingListScreen() {
         style={styles.mainContent}
       >
         <ScrollView
+          ref={scrollViewRef}
           style={styles.scrollView}
           contentContainerStyle={[
             styles.scrollContent,
             items.length === 0 && styles.scrollContentEmpty,
           ]}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          {items.length === 0 ? (
-            // Empty State
-            <View style={styles.emptyState}>
-              <View style={styles.emptyIconContainer}>
-                <MaterialCommunityIcons
-                  name="cart-outline"
-                  size={40}
-                  color="#9ca3af"
-                />
-              </View>
-              <Text style={styles.emptyTitle}>Your list is empty</Text>
-              <Text style={styles.emptySubtitle}>
-                Add items below to get started with your shopping
-              </Text>
-            </View>
-          ) : (
-            <>
-              {/* TO BUY Section */}
-              {unpurchasedItems.length > 0 && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>TO BUY</Text>
-                  {unpurchasedItems.map((item) => (
-                    <ShoppingItemCard
-                      key={item.id}
-                      item={item}
-                      onTogglePurchased={handleTogglePurchased}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View>
+              {items.length === 0 ? (
+                // Empty State
+                <View style={styles.emptyState}>
+                  <View style={styles.emptyIconContainer}>
+                    <MaterialCommunityIcons
+                      name="cart-outline"
+                      size={40}
+                      color="#9ca3af"
                     />
-                  ))}
+                  </View>
+                  <Text style={styles.emptyTitle}>Your list is empty</Text>
+                  <Text style={styles.emptySubtitle}>
+                    Add items below to get started with your shopping
+                  </Text>
                 </View>
-              )}
+              ) : (
+                <>
+                  {/* TO BUY Section */}
+                  {unpurchasedItems.length > 0 && (
+                    <View style={styles.section}>
+                      <Text style={styles.sectionHeader}>TO BUY</Text>
+                      {unpurchasedItems.map((item) => (
+                        <ShoppingItemCard
+                          key={item.id}
+                          item={item}
+                          onTogglePurchased={handleTogglePurchased}
+                          onEdit={handleEdit}
+                          onDelete={handleDelete}
+                        />
+                      ))}
+                    </View>
+                  )}
 
-              {/* PURCHASED Section */}
-              {purchasedItems.length > 0 && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>PURCHASED</Text>
-                  {purchasedItems.map((item) => (
-                    <ShoppingItemCard
-                      key={item.id}
-                      item={item}
-                      onTogglePurchased={handleTogglePurchased}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </View>
+                  {/* PURCHASED Section */}
+                  {purchasedItems.length > 0 && (
+                    <View style={styles.section}>
+                      <Text style={styles.sectionHeader}>PURCHASED</Text>
+                      {purchasedItems.map((item) => (
+                        <ShoppingItemCard
+                          key={item.id}
+                          item={item}
+                          onTogglePurchased={handleTogglePurchased}
+                          onEdit={handleEdit}
+                          onDelete={handleDelete}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </>
               )}
-            </>
-          )}
+            </View>
+          </TouchableWithoutFeedback>
         </ScrollView>
       </LinearGradient>
 
@@ -250,5 +332,16 @@ const styles = StyleSheet.create({
     color: "#6b7280",
     textAlign: "center",
     marginTop: 8,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#eff6ff",
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#6b7280",
   },
 });

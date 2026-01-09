@@ -1,6 +1,6 @@
 import { ShoppingItem } from "@/types/shopping";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Platform,
   StyleSheet,
@@ -26,10 +26,23 @@ export function ShoppingItemCard({
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(item.name);
   const [editQuantity, setEditQuantity] = useState(item.quantity);
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
+  const nameInputRef = useRef<TextInput>(null);
+  const quantityInputRef = useRef<TextInput>(null);
+
+  // Auto-focus name input when entering edit mode
+  useEffect(() => {
+    if (isEditing) {
+      setTimeout(() => {
+        nameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isEditing]);
 
   const handleSave = () => {
-    if (editName.trim()) {
-      onEdit(item.id, editName.trim(), editQuantity.trim());
+    const trimmedName = editName.trim();
+    if (trimmedName) {
+      onEdit(item.id, trimmedName, editQuantity.trim() || "-");
       setIsEditing(false);
     }
   };
@@ -45,18 +58,35 @@ export function ShoppingItemCard({
       <View style={styles.card}>
         <View style={styles.editContainer}>
           <TextInput
-            style={styles.editInput}
+            ref={nameInputRef}
+            style={[
+              styles.editInput,
+              focusedInput === "name" && styles.editInputFocused,
+            ]}
             value={editName}
             onChangeText={setEditName}
             placeholder="Item name"
             placeholderTextColor="#9ca3af"
+            returnKeyType="next"
+            onSubmitEditing={() => quantityInputRef.current?.focus()}
+            blurOnSubmit={false}
+            onFocus={() => setFocusedInput("name")}
+            onBlur={() => setFocusedInput(null)}
           />
           <TextInput
-            style={styles.editInput}
+            ref={quantityInputRef}
+            style={[
+              styles.editInput,
+              focusedInput === "quantity" && styles.editInputFocused,
+            ]}
             value={editQuantity}
             onChangeText={setEditQuantity}
             placeholder="Quantity"
             placeholderTextColor="#9ca3af"
+            returnKeyType="done"
+            onSubmitEditing={handleSave}
+            onFocus={() => setFocusedInput("quantity")}
+            onBlur={() => setFocusedInput(null)}
           />
           <View style={styles.editButtonsContainer}>
             <TouchableOpacity
@@ -219,6 +249,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#111827",
     marginBottom: 12,
+  },
+  editInputFocused: {
+    borderWidth: 2,
+    borderColor: "#2563eb",
   },
   editButtonsContainer: {
     flexDirection: "row",

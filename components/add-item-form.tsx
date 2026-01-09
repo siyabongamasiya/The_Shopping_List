@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -18,6 +19,8 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [error, setError] = useState("");
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
+  const quantityInputRef = useRef<TextInput>(null);
 
   const handleAdd = () => {
     if (!itemName.trim()) {
@@ -29,6 +32,7 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
     setItemName("");
     setQuantity("");
     setError("");
+    Keyboard.dismiss();
   };
 
   return (
@@ -44,7 +48,7 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
         ) : null}
 
         <TextInput
-          style={styles.input}
+          style={[styles.input, focusedInput === "name" && styles.inputFocused]}
           value={itemName}
           onChangeText={(text) => {
             setItemName(text);
@@ -52,14 +56,28 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
           }}
           placeholder="Item name"
           placeholderTextColor="#9ca3af"
+          returnKeyType="next"
+          onSubmitEditing={() => quantityInputRef.current?.focus()}
+          blurOnSubmit={false}
+          onFocus={() => setFocusedInput("name")}
+          onBlur={() => setFocusedInput(null)}
         />
 
         <TextInput
-          style={[styles.input, styles.quantityInput]}
+          ref={quantityInputRef}
+          style={[
+            styles.input,
+            styles.quantityInput,
+            focusedInput === "quantity" && styles.inputFocused,
+          ]}
           value={quantity}
           onChangeText={setQuantity}
           placeholder="Quantity (optional)"
           placeholderTextColor="#9ca3af"
+          returnKeyType="done"
+          onSubmitEditing={handleAdd}
+          onFocus={() => setFocusedInput("quantity")}
+          onBlur={() => setFocusedInput(null)}
         />
 
         <TouchableOpacity
@@ -121,6 +139,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
     color: "#111827",
+  },
+  inputFocused: {
+    borderWidth: 2,
+    borderColor: "#2563eb",
   },
   quantityInput: {
     marginTop: 8,
