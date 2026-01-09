@@ -4,21 +4,19 @@
     "slug": "The_Shopping_List",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.svg",
+    "icon": "./assets/images/icon.png",
     "scheme": "theshoppinglist",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "icon": "./assets/images/logo.svg",
       "bundleIdentifier": "com.siyabongakhanyile.shoppinglist"
     },
     "android": {
       "package": "com.siyabongakhanyile.shoppinglist",
-      "icon": "./assets/images/logo.svg",
       "adaptiveIcon": {
         "backgroundColor": "#2563eb",
-        "foregroundImage": "./assets/images/logo.svg",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
