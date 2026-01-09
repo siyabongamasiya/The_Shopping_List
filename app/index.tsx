@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingHorizontal: 16,
     paddingVertical: 24,
-    paddingBottom: 200, // Space for fixed bottom form
+    paddingBottom: 240, // Space for fixed bottom form + safe area
   },
   scrollContentEmpty: {
     flexGrow: 1,

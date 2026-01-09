@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface AddItemFormProps {
   onAdd: (name: string, quantity: string) => void;
@@ -21,6 +22,7 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
   const [error, setError] = useState("");
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const quantityInputRef = useRef<TextInput>(null);
+  const insets = useSafeAreaInsets();
 
   const handleAdd = () => {
     if (!itemName.trim()) {
@@ -40,7 +42,12 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <View style={styles.formContainer}>
+      <View
+        style={[
+          styles.formContainer,
+          { paddingBottom: Math.max(insets.bottom, 16) },
+        ]}
+      >
         {error ? (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>{error}</Text>
