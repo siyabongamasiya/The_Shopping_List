@@ -20,14 +20,13 @@
       "env": {
         "EXPO_PUBLIC_ENV": "preview"
       },
-      "credentialsSource": "remote"
+      "autoIncrement": false
     },
     "production": {
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ENV": "production"
-      },
-      "credentialsSource": "remote"
+      }
     }
   },
   "submit": {
