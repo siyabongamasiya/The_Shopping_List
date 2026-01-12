@@ -4,14 +4,14 @@ A modern, intuitive shopping list mobile application built with React Native and
 
 ## Features
 
-- ✅ **Add Items**: Quickly add items to your shopping list
-- ✏️ **Edit Items**: Tap to edit item names inline
-- 🗑️ **Delete Items**: Remove items you no longer need
-- ☑️ **Mark as Purchased**: Check off items as you shop
-- 💾 **Persistent Storage**: Your list is saved automatically using AsyncStorage
-- 🎨 **Beautiful UI**: Modern gradient design with smooth animations
-- 🌓 **Theme Support**: Automatic light/dark mode based on system preferences
-- 📱 **Safe Area Support**: Proper handling of device notches and navigation bars
+- **Add Items**: Quickly add items to your shopping list
+- **Edit Items**: Tap to edit item names inline
+- **Delete Items**: Remove items you no longer need
+- **Mark as Purchased**: Check off items as you shop
+- **Persistent Storage**: Your list is saved automatically using AsyncStorage
+- **Beautiful UI**: Modern gradient design with smooth animations
+- **Theme Support**: Automatic light/dark mode based on system preferences
+- **Safe Area Support**: Proper handling of device notches and navigation bars
 
 ## Tech Stack
 
@@ -31,41 +31,41 @@ A modern, intuitive shopping list mobile application built with React Native and
 
 ## Technical Requirements Implementation
 
-✅ **User Interface**: Clean, intuitive design with input fields, edit/delete buttons, and checkboxes
+**User Interface**: Clean, intuitive design with input fields, edit/delete buttons, and checkboxes
 
-✅ **Redux Setup**:
+**Redux Setup**:
 
 - Redux Toolkit for simplified Redux configuration
 - Actions: `addItem`, `editItem`, `deleteItem`, `togglePurchased`
 - Centralized state management in Redux store
 - Type-safe hooks (`useAppDispatch`, `useAppSelector`)
 
-✅ **Shopping List Features**:
+**Shopping List Features**:
 
 - Display items with checkboxes for purchased status
 - Add new items with name and quantity
 - Edit item details inline
 - Delete items with confirmation dialog
 
-✅ **State Management**:
+**State Management**:
 
 - All application state managed through Redux
 - Actions dispatched for all state changes
 - Reducers handle state updates immutably
 
-✅ **Persistence**:
+**Persistence**:
 
 - AsyncStorage integration for data persistence
 - Automatic save on every state change
 - Data loaded on app startup
 
-✅ **User Feedback**:
+**User Feedback**:
 
 - Visual feedback for add/edit/delete operations
 - Error messages displayed via Alert dialogs
 - Loading indicators during data fetch
 
-✅ **Documentation**:
+**Documentation**:
 
 - Comprehensive README with setup instructions
 - Code comments explaining Redux implementation
