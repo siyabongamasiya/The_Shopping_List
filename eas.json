@@ -15,7 +15,6 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "gradleCommand": ":app:assembleDebug",
         "withoutCredentials": true
       },
       "env": {
@@ -23,7 +22,7 @@
         "NODE_OPTIONS": "--max-old-space-size=4096"
       },
       "autoIncrement": false,
-      "resourceClass": "medium"
+      "resourceClass": "large"
     },
     "production": {
       "autoIncrement": true,
