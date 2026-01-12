@@ -2,6 +2,10 @@
 
 A modern, intuitive shopping list mobile application built with React Native and Expo. Easily manage your shopping items with a clean, user-friendly interface that works seamlessly on both Android and iOS devices.
 
+## Screenshot
+
+![App Screenshot](./assets/screenshots/the-shopping-list-designs.png)
+
 ## Features
 
 - **Add Items**: Quickly add items to your shopping list
@@ -112,7 +116,7 @@ npm run web      # Run in web browser
 ## Download
 
 Download the latest Android APK:
-[Download Shopping List APK](https://expo.dev/artifacts/eas/4ZNkUuWWS88kdmrdQQtTsm.apk)
+[Download Shopping List APK](https://expo.dev/artifacts/eas/2fBhNK366vB7G6R68oTtJL.apk)
 
 ## Building for Production
 
@@ -374,14 +378,6 @@ To learn more about developing your project with Expo, look at the following res
 
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-JoiCreate a feature branch: `git checkout -b feature-name` 3. Commit changes: `git commit -m "Add feature"` 4. Push to branch: `git push origin feature-name` 5. Submit a pull request
-
-## License
-
-This project is open source and available under the MIT License.
 
 ## Author
 
