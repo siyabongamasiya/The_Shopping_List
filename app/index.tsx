@@ -1,11 +1,17 @@
 import { AddItemForm } from "@/components/add-item-form";
 import { ShoppingItemCard } from "@/components/shopping-item-card";
-import { ShoppingItem } from "@/types/shopping";
-import { loadItems, saveItems } from "@/utils/storage";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  addItem,
+  clearError,
+  deleteItem,
+  editItem,
+  togglePurchased,
+} from "@/store/shoppingSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -20,51 +26,36 @@ import {
 } from "react-native";
 
 export default function ShoppingListScreen() {
-  const [items, setItems] = useState<ShoppingItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const { items, isLoading, error } = useAppSelector((state) => state.shopping);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  // Load items from storage on mount
+  // Display error messages to the user
   useEffect(() => {
-    const loadStoredItems = async () => {
-      try {
-        const storedItems = await loadItems();
-        setItems(storedItems);
-      } catch (error) {
-        console.error("Failed to load items:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadStoredItems();
-  }, []);
-
-  // Save items to storage whenever they change
-  useEffect(() => {
-    if (!isLoading) {
-      saveItems(items).catch((error) => {
-        console.error("Failed to save items:", error);
-      });
+    if (error) {
+      Alert.alert("Error", error, [
+        {
+          text: "OK",
+          onPress: () => dispatch(clearError()),
+        },
+      ]);
     }
-  }, [items, isLoading]);
+  }, [error, dispatch]);
 
   const unpurchasedItems = items.filter((item) => !item.purchased);
   const purchasedItems = items.filter((item) => item.purchased);
 
   const handleTogglePurchased = (id: string) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, purchased: !item.purchased } : item
-      )
-    );
+    dispatch(togglePurchased(id));
   };
 
   const handleEdit = (id: string, name: string, quantity: string) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, name, quantity } : item
-      )
+    if (!name.trim()) {
+      Alert.alert("Error", "Item name cannot be empty");
+      return;
+    }
+    dispatch(
+      editItem({ id, name: name.trim(), quantity: quantity.trim() || "-" })
     );
   };
 
@@ -84,7 +75,7 @@ export default function ShoppingListScreen() {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+            dispatch(deleteItem(id));
           },
         },
       ],
@@ -93,13 +84,17 @@ export default function ShoppingListScreen() {
   };
 
   const handleAdd = (name: string, quantity: string) => {
-    const newItem: ShoppingItem = {
-      id: Date.now().toString(),
-      name,
-      quantity: quantity || "-",
-      purchased: false,
-    };
-    setItems((prevItems) => [newItem, ...prevItems]);
+    if (!name.trim()) {
+      Alert.alert("Error", "Item name cannot be empty");
+      return;
+    }
+
+    dispatch(
+      addItem({
+        name: name.trim(),
+        quantity: quantity.trim() || "-",
+      })
+    );
 
     // Scroll to top to show the newly added item
     setTimeout(() => {

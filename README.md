@@ -17,9 +17,10 @@ A modern, intuitive shopping list mobile application built with React Native and
 
 - **Framework**: Expo SDK 54
 - **Runtime**: React Native 0.81.5 with React 19
-- **Routing**: Expo Router v6 (File-based navigation)
+- **State Management**: Redux Toolkit with React-Redux
+- **Routing**: Expo Router v6 (File-based routing)
 - **Language**: TypeScript
-- **Storage**: AsyncStorage
+- **Persistence**: AsyncStorage
 - **UI Components**:
   - Expo Linear Gradient
   - React Native Safe Area Context
@@ -27,6 +28,48 @@ A modern, intuitive shopping list mobile application built with React Native and
 - **Icons**: @expo/vector-icons (Material Community Icons)
 - **Build System**: EAS Build
 - **CI/CD**: GitHub Actions
+
+## Technical Requirements Implementation
+
+✅ **User Interface**: Clean, intuitive design with input fields, edit/delete buttons, and checkboxes
+
+✅ **Redux Setup**:
+
+- Redux Toolkit for simplified Redux configuration
+- Actions: `addItem`, `editItem`, `deleteItem`, `togglePurchased`
+- Centralized state management in Redux store
+- Type-safe hooks (`useAppDispatch`, `useAppSelector`)
+
+✅ **Shopping List Features**:
+
+- Display items with checkboxes for purchased status
+- Add new items with name and quantity
+- Edit item details inline
+- Delete items with confirmation dialog
+
+✅ **State Management**:
+
+- All application state managed through Redux
+- Actions dispatched for all state changes
+- Reducers handle state updates immutably
+
+✅ **Persistence**:
+
+- AsyncStorage integration for data persistence
+- Automatic save on every state change
+- Data loaded on app startup
+
+✅ **User Feedback**:
+
+- Visual feedback for add/edit/delete operations
+- Error messages displayed via Alert dialogs
+- Loading indicators during data fetch
+
+✅ **Documentation**:
+
+- Comprehensive README with setup instructions
+- Code comments explaining Redux implementation
+- User guide for app features
 
 ## Prerequisites
 
@@ -108,7 +151,7 @@ The project includes automated builds via GitHub Actions. Pushes to the `main` b
 ```
 The_Shopping_List/
 ├── app/                        # File-based routing
-│   ├── _layout.tsx            # Root layout with navigation
+│   ├── _layout.tsx            # Root layout with Redux Provider
 │   ├── index.tsx              # Main shopping list screen
 │   └── (tabs)/                # Tab navigation group
 ├── assets/                     # Images and static files
@@ -121,6 +164,10 @@ The_Shopping_List/
 │   └── themed-view.tsx        # Theme-aware view component
 ├── constants/                  # App constants
 │   └── theme.ts               # Color and font definitions
+├── store/                      # Redux store configuration
+│   ├── index.ts               # Store setup and configuration
+│   ├── shoppingSlice.ts       # Shopping list slice (actions & reducers)
+│   └── hooks.ts               # Typed Redux hooks
 ├── hooks/                      # Custom hooks
 │   ├── use-color-scheme.ts    # Color scheme detection
 │   └── use-theme-color.ts     # Theme color helper
@@ -134,15 +181,69 @@ The_Shopping_List/
 └── tsconfig.json              # TypeScript config
 ```
 
+## Redux Architecture
+
+### Store Configuration (`store/index.ts`)
+
+- Configures Redux store with Redux Toolkit
+- Subscribes to store changes for AsyncStorage persistence
+- Exports typed `RootState` and `AppDispatch` types
+
+### Shopping Slice (`store/shoppingSlice.ts`)
+
+**State:**
+
+- `items`: Array of shopping items
+- `isLoading`: Loading state indicator
+- `error`: Error message string
+
+**Actions:**
+
+- `addItem(payload)`: Add new item to the list
+- `editItem(payload)`: Update item name and quantity
+- `deleteItem(id)`: Remove item from the list
+- `togglePurchased(id)`: Toggle purchased status
+- `setItems(items)`: Load items from storage
+- `setLoading(bool)`: Set loading state
+- `setError(message)`: Set error message
+- `clearError()`: Clear error state
+
+**Reducers:**
+
+- Immutably update state based on dispatched actions
+- Validate item existence before updates
+- Set error states for failed operations
+
+### Custom Hooks (`store/hooks.ts`)
+
+- `useAppDispatch`: Typed dispatch hook
+- `useAppSelector`: Typed selector hook
+
+### Usage Example:
+
+```typescript
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addItem, deleteItem } from "@/store/shoppingSlice";
+
+// In component
+const dispatch = useAppDispatch();
+const items = useAppSelector((state) => state.shopping.items);
+
+// Dispatch actions
+dispatch(addItem({ name: "Milk", quantity: "2" }));
+dispatch(deleteItem("item-id"));
+```
+
 ## Key Components
 
 ### Main Screen (`app/index.tsx`)
 
 The main shopping list interface with:
 
+- Redux integration for state management
 - Scrollable list of items
 - Add item form at the bottom
-- Pull-to-refresh functionality
+- Error message dialogs
 - Keyboard dismissal on tap
 
 ### Shopping Item Card (`components/shopping-item-card.tsx`)
@@ -162,21 +263,68 @@ Bottom-fixed form with:
 - Safe area insets support
 - Keyboard return key handling
 
-## Storage
+## Storage & Persistence
 
-Shopping list data is persisted locally using AsyncStorage:
+Shopping list data is persisted using:
 
+- **Storage Layer**: AsyncStorage for local persistence
+- **Redux Integration**: Store automatically saves to AsyncStorage on state changes
 - **Key**: `shopping-list-items`
 - **Format**: JSON array of shopping items
-- **Auto-save**: Changes save automatically on every update
+- **Auto-save**: Triggered by Redux store subscription
+- **Load on Startup**: Data loaded during app initialization before Redux store setup
 
 ## Development
+
+### Install Dependencies
+
+First, install all required packages including Redux:
+
+```bash
+npm install
+```
+
+### Running the App
+
+```bash
+npm start          # Start Expo development server
+npm run android    # Run on Android
+npm run ios        # Run on iOS
+npm run web        # Run in web browser
+```
 
 ### Linting
 
 ```bash
 npm run lint
 ```
+
+### Testing Redux
+
+To test Redux actions and reducers:
+
+```typescript
+import { store } from "@/store";
+import { addItem, editItem, deleteItem } from "@/store/shoppingSlice";
+
+// Test adding an item
+store.dispatch(addItem({ name: "Test Item", quantity: "1" }));
+console.log(store.getState().shopping.items);
+
+// Test editing an item
+const itemId = store.getState().shopping.items[0].id;
+store.dispatch(editItem({ id: itemId, name: "Updated", quantity: "2" }));
+
+// Test deleting an item
+store.dispatch(deleteItem(itemId));
+```
+
+**Integration Testing:**
+
+- Test Redux actions dispatch correctly
+- Verify reducers update state immutably
+- Confirm AsyncStorage persistence works
+- Validate error handling and user feedback
 
 ### Reset Project
 

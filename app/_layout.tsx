@@ -1,29 +1,40 @@
+import { initializeStore, store } from "@/store";
+import { setItems, setLoading } from "@/store/shoppingSlice";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { Provider } from "react-redux";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useEffect(() => {
-    // Hide splash screen after component mounts
-    const hideSplash = async () => {
+    // Load items from storage and initialize Redux store
+    const initApp = async () => {
       try {
-        await SplashScreen.hideAsync();
+        store.dispatch(setLoading(true));
+        const items = await initializeStore();
+        store.dispatch(setItems(items));
       } catch (error) {
-        console.warn("Error hiding splash screen:", error);
+        console.error("Error initializing app:", error);
+      } finally {
+        // Hide splash screen after data is loaded
+        try {
+          await SplashScreen.hideAsync();
+        } catch (error) {
+          console.warn("Error hiding splash screen:", error);
+        }
       }
     };
 
-    // Add a small delay to ensure everything is loaded
-    const timer = setTimeout(hideSplash, 100);
+    const timer = setTimeout(initApp, 100);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <>
+    <Provider store={store}>
       <Stack>
         <Stack.Screen
           name="index"
@@ -34,6 +45,6 @@ export default function RootLayout() {
         />
       </Stack>
       <StatusBar style="light" />
-    </>
+    </Provider>
   );
 }
