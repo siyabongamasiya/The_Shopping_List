@@ -4,12 +4,12 @@
     "slug": "The_Shopping_List",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/shopping-list-logo.png",
     "scheme": "theshoppinglist",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image": "./assets/images/shopping-list-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,7 +22,7 @@
       "permissions": [],
       "adaptiveIcon": {
         "backgroundColor": "#2563eb",
-        "foregroundImage": "./assets/images/android-icon-foreground.png"
+        "foregroundImage": "./assets/images/shopping-list-logo.png"
       },
       "jsEngine": "hermes",
       "buildToolsVersion": "34.0.0",
@@ -39,7 +39,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/shopping-list-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
