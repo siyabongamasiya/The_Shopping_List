@@ -6,32 +6,12 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      }
+      "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk",
-        "withoutCredentials": true
-      },
-      "env": {
-        "EXPO_PUBLIC_ENV": "preview",
-        "NODE_OPTIONS": "--max-old-space-size=4096"
-      },
-      "autoIncrement": false,
-      "cache": {
-        "disabled": true
-      }
+      "distribution": "internal"
     },
-    "production": {
-      "autoIncrement": true,
-      "env": {
-        "EXPO_PUBLIC_ENV": "production"
-      }
-    }
+    "production": {}
   },
   "submit": {
     "production": {}
