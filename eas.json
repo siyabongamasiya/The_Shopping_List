@@ -21,7 +21,10 @@
         "EXPO_PUBLIC_ENV": "preview",
         "NODE_OPTIONS": "--max-old-space-size=4096"
       },
-      "autoIncrement": false
+      "autoIncrement": false,
+      "cache": {
+        "disabled": true
+      }
     },
     "production": {
       "autoIncrement": true,
