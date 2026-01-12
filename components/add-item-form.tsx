@@ -2,7 +2,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import {
   Keyboard,
-  KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
@@ -38,65 +37,57 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+    <View
+      style={[styles.container, { paddingBottom: Math.max(insets.bottom, 16) }]}
     >
-      <View
+      {error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : null}
+
+      <TextInput
+        style={[styles.input, focusedInput === "name" && styles.inputFocused]}
+        value={itemName}
+        onChangeText={(text) => {
+          setItemName(text);
+          if (error) setError("");
+        }}
+        placeholder="Item name"
+        placeholderTextColor="#9ca3af"
+        returnKeyType="next"
+        onSubmitEditing={() => quantityInputRef.current?.focus()}
+        blurOnSubmit={false}
+        onFocus={() => setFocusedInput("name")}
+        onBlur={() => setFocusedInput(null)}
+      />
+
+      <TextInput
+        ref={quantityInputRef}
         style={[
-          styles.formContainer,
-          { paddingBottom: Math.max(insets.bottom, 16) },
+          styles.input,
+          styles.quantityInput,
+          focusedInput === "quantity" && styles.inputFocused,
         ]}
+        value={quantity}
+        onChangeText={setQuantity}
+        placeholder="Quantity (optional)"
+        placeholderTextColor="#9ca3af"
+        returnKeyType="done"
+        onSubmitEditing={handleAdd}
+        onFocus={() => setFocusedInput("quantity")}
+        onBlur={() => setFocusedInput(null)}
+      />
+
+      <TouchableOpacity
+        style={[styles.addButton, itemName.trim() && styles.addButtonActive]}
+        onPress={handleAdd}
+        activeOpacity={0.8}
       >
-        {error ? (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        ) : null}
-
-        <TextInput
-          style={[styles.input, focusedInput === "name" && styles.inputFocused]}
-          value={itemName}
-          onChangeText={(text) => {
-            setItemName(text);
-            if (error) setError("");
-          }}
-          placeholder="Item name"
-          placeholderTextColor="#9ca3af"
-          returnKeyType="next"
-          onSubmitEditing={() => quantityInputRef.current?.focus()}
-          blurOnSubmit={false}
-          onFocus={() => setFocusedInput("name")}
-          onBlur={() => setFocusedInput(null)}
-        />
-
-        <TextInput
-          ref={quantityInputRef}
-          style={[
-            styles.input,
-            styles.quantityInput,
-            focusedInput === "quantity" && styles.inputFocused,
-          ]}
-          value={quantity}
-          onChangeText={setQuantity}
-          placeholder="Quantity (optional)"
-          placeholderTextColor="#9ca3af"
-          returnKeyType="done"
-          onSubmitEditing={handleAdd}
-          onFocus={() => setFocusedInput("quantity")}
-          onBlur={() => setFocusedInput(null)}
-        />
-
-        <TouchableOpacity
-          style={[styles.addButton, itemName.trim() && styles.addButtonActive]}
-          onPress={handleAdd}
-          activeOpacity={0.8}
-        >
-          <MaterialCommunityIcons name="plus" size={20} color="#ffffff" />
-          <Text style={styles.addButtonText}>Add Item</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+        <MaterialCommunityIcons name="plus" size={20} color="#ffffff" />
+        <Text style={styles.addButtonText}>Add Item</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -106,8 +97,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-  },
-  formContainer: {
     backgroundColor: "#ffffff",
     borderTopWidth: 1,
     borderTopColor: "#e5e7eb",

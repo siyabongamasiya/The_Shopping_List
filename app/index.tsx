@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -133,100 +134,106 @@ export default function ShoppingListScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header Section */}
-      <LinearGradient colors={["#2563eb", "#1d4ed8"]} style={styles.header}>
-        <View style={styles.headerContent}>
-          <View style={styles.titleContainer}>
-            <Image
-              source={require("@/assets/images/logo.svg")}
-              style={styles.logo}
-              contentFit="contain"
-            />
-            <View>
-              <Text style={styles.headerTitle}>Shopping List</Text>
-              <Text style={styles.headerSubtitle}>
-                {totalItemsToBuy} {totalItemsToBuy === 1 ? "item" : "items"} to
-                buy
-              </Text>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={0}
+      >
+        {/* Header Section */}
+        <LinearGradient colors={["#2563eb", "#1d4ed8"]} style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.titleContainer}>
+              <Image
+                source={require("@/assets/images/logo.svg")}
+                style={styles.logo}
+                contentFit="contain"
+              />
+              <View>
+                <Text style={styles.headerTitle}>Shopping List</Text>
+                <Text style={styles.headerSubtitle}>
+                  {totalItemsToBuy} {totalItemsToBuy === 1 ? "item" : "items"}{" "}
+                  to buy
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-      </LinearGradient>
+        </LinearGradient>
 
-      {/* Main Content Area */}
-      <LinearGradient
-        colors={["#eff6ff", "#ffffff"]}
-        style={styles.mainContent}
-      >
-        <ScrollView
-          ref={scrollViewRef}
-          style={styles.scrollView}
-          contentContainerStyle={[
-            styles.scrollContent,
-            items.length === 0 && styles.scrollContentEmpty,
-          ]}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+        {/* Main Content Area */}
+        <LinearGradient
+          colors={["#eff6ff", "#ffffff"]}
+          style={styles.mainContent}
         >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View>
-              {items.length === 0 ? (
-                // Empty State
-                <View style={styles.emptyState}>
-                  <View style={styles.emptyIconContainer}>
-                    <MaterialCommunityIcons
-                      name="cart-outline"
-                      size={40}
-                      color="#9ca3af"
-                    />
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.scrollView}
+            contentContainerStyle={[
+              styles.scrollContent,
+              items.length === 0 && styles.scrollContentEmpty,
+            ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View>
+                {items.length === 0 ? (
+                  // Empty State
+                  <View style={styles.emptyState}>
+                    <View style={styles.emptyIconContainer}>
+                      <MaterialCommunityIcons
+                        name="cart-outline"
+                        size={40}
+                        color="#9ca3af"
+                      />
+                    </View>
+                    <Text style={styles.emptyTitle}>Your list is empty</Text>
+                    <Text style={styles.emptySubtitle}>
+                      Add items below to get started with your shopping
+                    </Text>
                   </View>
-                  <Text style={styles.emptyTitle}>Your list is empty</Text>
-                  <Text style={styles.emptySubtitle}>
-                    Add items below to get started with your shopping
-                  </Text>
-                </View>
-              ) : (
-                <>
-                  {/* TO BUY Section */}
-                  {unpurchasedItems.length > 0 && (
-                    <View style={styles.section}>
-                      <Text style={styles.sectionHeader}>TO BUY</Text>
-                      {unpurchasedItems.map((item) => (
-                        <ShoppingItemCard
-                          key={item.id}
-                          item={item}
-                          onTogglePurchased={handleTogglePurchased}
-                          onEdit={handleEdit}
-                          onDelete={handleDelete}
-                        />
-                      ))}
-                    </View>
-                  )}
+                ) : (
+                  <>
+                    {/* TO BUY Section */}
+                    {unpurchasedItems.length > 0 && (
+                      <View style={styles.section}>
+                        <Text style={styles.sectionHeader}>TO BUY</Text>
+                        {unpurchasedItems.map((item) => (
+                          <ShoppingItemCard
+                            key={item.id}
+                            item={item}
+                            onTogglePurchased={handleTogglePurchased}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                          />
+                        ))}
+                      </View>
+                    )}
 
-                  {/* PURCHASED Section */}
-                  {purchasedItems.length > 0 && (
-                    <View style={styles.section}>
-                      <Text style={styles.sectionHeader}>PURCHASED</Text>
-                      {purchasedItems.map((item) => (
-                        <ShoppingItemCard
-                          key={item.id}
-                          item={item}
-                          onTogglePurchased={handleTogglePurchased}
-                          onEdit={handleEdit}
-                          onDelete={handleDelete}
-                        />
-                      ))}
-                    </View>
-                  )}
-                </>
-              )}
-            </View>
-          </TouchableWithoutFeedback>
-        </ScrollView>
-      </LinearGradient>
+                    {/* PURCHASED Section */}
+                    {purchasedItems.length > 0 && (
+                      <View style={styles.section}>
+                        <Text style={styles.sectionHeader}>PURCHASED</Text>
+                        {purchasedItems.map((item) => (
+                          <ShoppingItemCard
+                            key={item.id}
+                            item={item}
+                            onTogglePurchased={handleTogglePurchased}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                          />
+                        ))}
+                      </View>
+                    )}
+                  </>
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          </ScrollView>
+        </LinearGradient>
 
-      {/* Bottom Add Item Form */}
-      <AddItemForm onAdd={handleAdd} />
+        {/* Bottom Add Item Form */}
+        <AddItemForm onAdd={handleAdd} />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -235,6 +242,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
   header: {
     paddingTop: 48,
