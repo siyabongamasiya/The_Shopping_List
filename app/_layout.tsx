@@ -1,5 +1,5 @@
 import { initializeStore, store } from "@/store";
-import { setItems, setLoading } from "@/store/shoppingSlice";
+import { setItems } from "@/store/shoppingSlice";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -14,9 +14,9 @@ export default function RootLayout() {
     // Load items from storage and initialize Redux store
     const initApp = async () => {
       try {
-        store.dispatch(setLoading(true));
         const items = await initializeStore();
         store.dispatch(setItems(items));
+        console.log("Loaded items from storage:", items.length);
       } catch (error) {
         console.error("Error initializing app:", error);
       } finally {
@@ -29,8 +29,7 @@ export default function RootLayout() {
       }
     };
 
-    const timer = setTimeout(initApp, 100);
-    return () => clearTimeout(timer);
+    initApp();
   }, []);
 
   return (
