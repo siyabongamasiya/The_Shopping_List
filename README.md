@@ -2,6 +2,9 @@
 
 A modern, intuitive shopping list mobile application built with React Native and Expo. Easily manage your shopping items with a clean, user-friendly interface that works seamlessly on both Android and iOS devices.
 
+
+#### ** I am currently out of build tokens ,so i cannot share latest APK builds **
+
 ## Screenshot
 
 ![App Screenshot](./assets/screenshots/the-shopping-list-designs.png)
